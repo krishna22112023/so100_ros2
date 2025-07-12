@@ -1,0 +1,11 @@
+<mujocoinclude model="">
+
+    <!-- Add free joint to make the ball movable -->
+    <freejoint name="ball_free"/>
+    
+    <!-- Add inertial properties for the ball -->
+    <inertial pos="0 0 0" mass="0.05" diaginertia="0.0001 0.0001 0.0001"/>
+    
+    <geom name="spheresmall_visual" mesh="spheresmall"/>
+    <geom name="spheresmall_contact0" mesh="spheresmall_contact0" class="object_col"/>
+</mujocoinclude>
