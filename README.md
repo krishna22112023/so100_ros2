@@ -67,12 +67,11 @@ Source the ROS2 workspace:
 source install/setup.bash
 ```
 
-## Run
+## Run position control
 
-To launch the mujoco_ros node and the position_commander node
-
+To launch the mujoco_ros node and the position_commander node, along with the target positions (in radians) as arguments
 ```
-ros2 launch so100_ros_controller position_control_open_loop.py
+ros2 launch so100_ros_controller position_control_open_loop.py target_positions:="[0.5,-0.3,0.0,0.0,0.0,0.8]"
 ```
 The mujoco_ros node subscribes to the `position_command` topic published by the position_commander node.
 While the mujoco_ros node published to the `joint_state` topic. 
