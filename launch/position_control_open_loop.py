@@ -7,14 +7,12 @@ from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
 
-    # Where is the XML scene file?
     directory = get_package_share_directory('so100_ros_controller')
     xmlScenePath = os.path.join(directory, 'model', 'scene.xml')  # absolute path inside the package
 
     if not os.path.exists(xmlScenePath):
         raise FileNotFoundError(f"Scene file does not exist: {xmlScenePath}.")
 
-    # ------------------- launch-time arguments -------------------
     joint_cmd_arg = DeclareLaunchArgument(
         'joint_command_topic_name',
         default_value='position_command',
@@ -27,7 +25,13 @@ def generate_launch_description():
         description='Control mode: POSITION | VELOCITY | TORQUE'
     )
 
-    # ------------------- node definitions -----------------------
+    # Desired arm joint positions (first 6 joints)
+    target_positions_arg = DeclareLaunchArgument(
+        'target_positions',
+        default_value='[1.0,1.0,1.0,1.0,1.0,1.0]',
+        description='Comma-separated list or YAML sequence of 6 target joint positions'
+    )
+
     mujoco = Node(
         package='so100_ros_controller',
         executable='mujoco_ros',
@@ -42,12 +46,16 @@ def generate_launch_description():
     position_commander = Node(
         package    = "so100_ros_controller",
         executable = "position_commander",
-        output     = "screen"
+        output     = "screen",
+        parameters = [{
+            'target_positions': LaunchConfiguration('target_positions'),
+        }]
     )
 
     return LaunchDescription([
         joint_cmd_arg,
         control_mode_arg,
+        target_positions_arg,
         mujoco,
         position_commander,
     ])

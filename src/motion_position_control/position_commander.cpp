@@ -4,6 +4,17 @@
 using namespace motion_position_control;
 
 PositionCommander::PositionCommander():Node("position_commander"){
+    // Declare a parameter that allows the user to specify the first 6 desired joint positions
+    // Default values keep the previous behaviour (all joints to 1.0)
+    this->declare_parameter<std::vector<double>>("target_positions", std::vector<double>{1.0, 1.0, 1.0, 1.0, 1.0, 1.0});
+
+    // Retrieve the parameter once at start-up. Users can still change it at runtime
+    this->get_parameter("target_positions", target_positions_);
+    if (target_positions_.size() != 6) {
+        RCLCPP_WARN(this->get_logger(), "Parameter 'target_positions' should contain exactly 6 elements (received %zu). Using defaults instead.", target_positions_.size());
+        target_positions_ = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+    }
+
     position_publisher_ = create_publisher<std_msgs::msg::Float64MultiArray>("position_command", 10); //10 refers to publisher queue size
     // the position_commander node pusblishes messages to the "position_command" topic
     // <controller_name>/commands is a standard topic name format
@@ -17,7 +28,7 @@ void PositionCommander::publish_loop() {
     std_msgs::msg::Float64MultiArray message;
 
     // Desired arm joint positions (6 DOF)
-    message.data = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+    message.data = target_positions_;
 
     // Default configuration for the cup free joint (7 DOF: xyz + wxyz)
     const std::array<double, 7> cup_default = {0.0, -0.4, 0.05, 1.0, 0.0, 0.0, 0.0};
@@ -32,7 +43,7 @@ void PositionCommander::publish_loop() {
     position_publisher_->publish(message);
 
     RCLCPP_INFO(this->get_logger(), "Published position command (first 6 joints): [%f, %f, %f, %f, %f, %f]", 
-                message.data[0], message.data[1], message.data[2], message.data[3], message.data[4], message.data[5]);
+                target_positions_[0], target_positions_[1], target_positions_[2], target_positions_[3], target_positions_[4], target_positions_[5]);
 }
 
 int main(int argc, char **argv) {
