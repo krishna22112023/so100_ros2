@@ -3,7 +3,7 @@
   
   <include file="so_arm100.xml"/>
   <include file="cup_assets.xml"/>
-  <include file="ball_assets.xml"/>
+  <include file="assets_toothbrush.xml"/>
   <include file="common.xml"/>
 
   <statistic center="0.1 -0.01 0.05" extent="0.5"/>
@@ -23,6 +23,10 @@
 
   <worldbody>
     <light pos="0 0 1.5" dir="0 0 -1" directional="true"/>
+    <!-- Static top-down camera looking down at the workspace -->
+    <camera name="top_down" pos="0 -0.3 1.2" euler="0 0 3.14159"/>
+    <!-- Side-view camera at lower angle -->
+    <camera name="side_view" pos="0 -0.3 0.6" euler="0 0 1.57079"/>
     <geom name="floor" size="0 0 0.05" type="plane" material="groundplane"/>
     
     <!-- Cup positioned on the table -->
@@ -30,13 +34,14 @@
       <include file="cup_body.xml"/>
     </body>
     
-    <!-- Ball positioned within reach of the arm, slightly elevated -->
-    <body name="ball" pos="0.15 -0.2 0.07" childclass="grab">
-      <include file="ball_body.xml"/>
+    <!-- Replace ball assets include with toothbrush assets -->
+    <body name="toothbrush" pos="0.08 -0.4 0.07" childclass="grab">
+      <include file="body_toothbrush.xml"/>
     </body>
   </worldbody>
 
-  <!-- Updated keyframes to account for all DOF: arm(6) + cup_freejoint(7) + ball_freejoint(7) = 20 -->
+  <!-- Updated keyframes comment to reflect toothbrush -->
+  <!-- Updated keyframes to account for all DOF: arm(6) + cup_freejoint(7) + toothbrush_freejoint(7) = 20 -->
   <keyframe>
     <!-- Arm joints: [Rotation, Pitch, Elbow, Wrist_Pitch, Wrist_Roll, Jaw] + Cup freejoint (pos_xyz + quat_wxyz) + Ball freejoint (pos_xyz + quat_wxyz) -->
     <key name="home" qpos="0 -1.57 1.57 1.57 -1.57 0  0 -0.4 0.05 1 0 0 0  0.08 -0.2 0.07 1 0 0 0"
